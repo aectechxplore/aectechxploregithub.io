@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darcy-Weisbach Head Loss Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #48ff94 0%, #ffcd2b 100%);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fb79ff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #66a6ff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background-color: #66a6ff;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #4080ff;
+        }
+
+        .result {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+            color: #333;
+        }
+
+        .equation {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            background-color: #e8f0fe;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .equation span {
+            font-weight: bold;
+        }
+
+        .equation .fraction {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .equation .numerator {
+            display: block;
+            text-align: center;
+        }
+
+        .equation .denominator {
+            border-top: 1px solid #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Darcy-Weisbach Head Loss Calculator</h1>
+
+        <div class="equation">
+            <p>Darcy-Weisbach Equation:</p>
+            <div class="fraction">
+                <div class="numerator">f &middot; L &middot; v<sup>2</sup></div>
+                <div class="denominator">2 &middot; g &middot; D</div>
+            </div>
+            <p>= Head Loss (h<sub>L</sub>)</p>
+        </div>
+
+        <label for="frictionFactor">Friction Factor (f):</label>
+        <input type="number" id="frictionFactor" placeholder="Enter friction factor" step="any">
+
+        <label for="pipeLength">Pipe Length (L, meters or feet):</label>
+        <input type="number" id="pipeLength" placeholder="Enter length of the pipe" step="any">
+
+        <label for="pipeDiameter">Pipe Diameter (D, meters or feet):</label>
+        <input type="number" id="pipeDiameter" placeholder="Enter diameter of the pipe" step="any">
+
+        <label for="fluidVelocity">Fluid Velocity (v, m/s or ft/s):</label>
+        <input type="number" id="fluidVelocity" placeholder="Enter fluid velocity" step="any">
+
+        <label for="gravity">Gravitational Acceleration (g, 9.81 m/s² or 32.2 ft/s²):</label>
+        <input type="number" id="gravity" value="9.81" step="any">
+
+        <button onclick="findMissingValue()">Find Missing Value</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function findMissingValue() {
+            const f = parseFloat(document.getElementById('frictionFactor').value);
+            const L = parseFloat(document.getElementById('pipeLength').value);
+            const D = parseFloat(document.getElementById('pipeDiameter').value);
+            const v = parseFloat(document.getElementById('fluidVelocity').value);
+            const g = parseFloat(document.getElementById('gravity').value);
+
+            let result = '';
+
+            // Case 1: Calculate head loss if all parameters are provided
+            if (!isNaN(f) && !isNaN(L) && !isNaN(D) && !isNaN(v)) {
+                const headLoss = (f * (L / D) * (v ** 2)) / (2 * g);
+                result = `Calculated Head Loss: ${headLoss.toFixed(4)} units`;
+            }
+            // Case 2: Calculate friction factor if it's missing
+            else if (isNaN(f) && !isNaN(L) && !isNaN(D) && !isNaN(v)) {
+                const calculatedF = (2 * g * headLoss) / ((L / D) * (v ** 2));
+                result = `Calculated Friction Factor (f): ${calculatedF.toFixed(4)}`;
+            }
+            // Case 3: Calculate pipe length if it's missing
+            else if (isNaN(L) && !isNaN(f) && !isNaN(D) && !isNaN(v)) {
+                const calculatedL = (headLoss * 2 * g * D) / (f * v ** 2);
+                result = `Calculated Pipe Length (L): ${calculatedL.toFixed(4)} meters or feet`;
+            }
+            // Case 4: Calculate pipe diameter if it's missing
+            else if (isNaN(D) && !isNaN(f) && !isNaN(L) && !isNaN(v)) {
+                const calculatedD = (f * (L / headLoss) * v ** 2) / (2 * g);
+                result = `Calculated Pipe Diameter (D): ${calculatedD.toFixed(4)} meters or feet`;
+            }
+            // Case 5: Calculate fluid velocity if it's missing
+            else if (isNaN(v) && !isNaN(f) && !isNaN(L) && !isNaN(D)) {
+                const calculatedV = Math.sqrt((2 * g * headLoss) / (f * (L / D)));
+                result = `Calculated Fluid Velocity (v): ${calculatedV.toFixed(4)} m/s or ft/s`;
+            }
+            // Case 6: Handle cases where not enough data is provided
+            else {
+                result = "Please provide enough information to calculate the missing value.";
+            }
+
+            document.getElementById('result').innerHTML = result;
+        }
+    </script>
+</body>
+</html>

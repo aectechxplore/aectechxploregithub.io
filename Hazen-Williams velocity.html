@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazen-Williams Velocity Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <head>
+    <!-- Header Section -->
+    <header class="header">
+        <h1>Hazen-Williams Velocity Calculator</h1>
+        <div class="btn-group">
+            <a href="index.html" class="btn" onclick="dissolveAndNavigate(this, 'Darcy-Weisbach equation.html')">Back to home page</a>
+        </div>
+    </header>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #96e6a1;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background-color: #43a047;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2e7d32;
+        }
+
+        .result {
+            margin-top: 20px;
+            background-color: #b1b1b171;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hazen-Williams Calculator</h1>
+        <div class="equation">
+          <p><strong>
+            <em>v = 0.849 &middot; C &middot; R<sup>0.63</sup> &middot; S<sup>0.54</sup></em>
+        </p></strong>
+        </div><br>
+
+        <label for="roughnessCoefficient"><br>Roughness Coefficient (C):</label>
+        <input type="number" id="roughnessCoefficient" placeholder="Enter Hazen-Williams roughness coefficient" step="any">
+
+        <label for="pipeDiameter"><br>Pipe Diameter (D, meters or feet):</label>
+        <input type="number" id="pipeDiameter" placeholder="Enter diameter of the pipe" step="any">
+
+        <label for="headLoss"><br>Head Loss (h_f, meters or feet):</label>
+        <input type="number" id="headLoss" placeholder="Enter head loss" step="any">
+
+        <label for="pipeLength"><br>Pipe Length (L, meters or feet):</label>
+        <input type="number" id="pipeLength" placeholder="Enter length of the pipe" step="any">
+
+        <label for="velocity"><br>Velocity (v, meters or feet per second):</label>
+        <input type="number" id="velocity" placeholder="Enter velocity if known" step="any">
+
+        <button onclick="findMissingValue()">Find Missing Value</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function findMissingValue() {
+            const C = parseFloat(document.getElementById('roughnessCoefficient').value);
+            const D = parseFloat(document.getElementById('pipeDiameter').value);
+            const hf = parseFloat(document.getElementById('headLoss').value);
+            const L = parseFloat(document.getElementById('pipeLength').value);
+            const velocity = parseFloat(document.getElementById('velocity').value);
+
+            let result = '';
+
+            // Case 1: Calculate velocity if it is missing
+            if (isNaN(velocity) && !isNaN(C) && !isNaN(D) && !isNaN(hf) && !isNaN(L)) {
+                const R = D / 4;
+                const S = hf / L;
+                const calculatedVelocity = 0.849 * C * (R ** 0.63) * (S ** 0.54);
+                result = `Calculated Velocity: ${calculatedVelocity.toFixed(4)} m/s or ft/s`;
+            }
+            // Case 2: Calculate roughness coefficient (C) if it is missing
+            else if (isNaN(C) && !isNaN(velocity) && !isNaN(D) && !isNaN(hf) && !isNaN(L)) {
+                const R = D / 4;
+                const S = hf / L;
+                const calculatedC = velocity / (0.849 * (R ** 0.63) * (S ** 0.54));
+                result = `Calculated Roughness Coefficient (C): ${calculatedC.toFixed(4)}`;
+            }
+            // Case 3: Calculate pipe diameter (D) if it is missing
+            else if (isNaN(D) && !isNaN(C) && !isNaN(velocity) && !isNaN(hf) && !isNaN(L)) {
+                const S = hf / L;
+                const calculatedD = (4 * ((velocity / (0.849 * C * (S ** 0.54))) ** (1 / 0.63))).toFixed(4);
+                result = `Calculated Pipe Diameter (D): ${calculatedD}`;
+            }
+            // Case 4: Calculate head loss (hf) if it is missing
+            else if (isNaN(hf) && !isNaN(C) && !isNaN(D) && !isNaN(velocity) && !isNaN(L)) {
+                const R = D / 4;
+                const S = ((velocity / (0.849 * C * (R ** 0.63))) ** (1 / 0.54));
+                const calculatedHf = (S * L).toFixed(4);
+                result = `Calculated Head Loss (h_f): ${calculatedHf}`;
+            }
+            // Case 5: Calculate pipe length (L) if it is missing
+            else if (isNaN(L) && !isNaN(C) && !isNaN(D) && !isNaN(velocity) && !isNaN(hf)) {
+                const R = D / 4;
+                const S = ((velocity / (0.849 * C * (R ** 0.63))) ** (1 / 0.54));
+                const calculatedL = (hf / S).toFixed(4);
+                result = `Calculated Pipe Length (L): ${calculatedL}`;
+            }
+            // If not enough inputs to calculate any missing value
+            else {
+                result = "Please provide enough information to calculate the missing value.";
+            }
+
+            document.getElementById('result').innerHTML = result;
+        }
+    </script>
+</body>
+</html>

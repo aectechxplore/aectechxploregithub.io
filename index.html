@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drinking Water Supply and Treatment</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1>Drinking Water Supply and Treatment</h1>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="Darcy-Weisbach equation.html">Darcy-Weisbach Equation</a></li>
+                    <li><a href="Hazen-Williams equation.html">Hazen-Williams Equation</a></li>
+                    <li><a href="Hazen-Williams velocity.html">Hazen-Williams Velocity</a></li>
+                    <li><a href="Manning’s equation.html">Manning’s Equation</a></li>
+                </ul>
+            </nav>
+        </header>
+
+            <!-- Video Background Section -->
+    <div class="video-container">
+        <video autoplay muted loop playsinline>
+            <source src="intro_1.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+        <!-- Main Content Section -->
+        <div class="content">
+            <h2>Calculating the Fluid States in Flows</h2>
+            <div class="btn-group">
+                <a href="javascript:void(0);" class="btn" onclick="dissolveAndNavigate(this, 'Darcy-Weisbach equation.html')">Darcy-Weisbach Equation</a>
+                <a href="javascript:void(0);" class="btn" onclick="dissolveAndNavigate(this, 'Hazen-Williams equation.html')">Hazen-Williams Equation</a>
+                <a href="javascript:void(0);" class="btn" onclick="dissolveAndNavigate(this, 'Hazen-Williams velocity.html')">Hazen-Williams Velocity</a>
+                <a href="javascript:void(0);" class="btn" onclick="dissolveAndNavigate(this, 'Manning’s equation.html')">Manning’s Equation</a>
+            </div>
+            
+        </div>
+
+        <!-- Footer Section -->
+        <footer class="footer">
+            <p><strong>Final CSE Project Team:</strong><br>SANJAY KUMAR S, MANIBHARATHI S, ABINAYA K, RUBALA M</p>
+            <p>&copy; 2024 @pediagrifyt. All rights reserved.</p>
+        </footer>
+    </div>
+    <script>
+        function dissolveAndNavigate(button, targetUrl) {
+            // Add the 'dissolve' animation class to the button
+            button.style.animation = "dissolve 1s forwards";
+            
+            // Wait for the animation to complete (1 second), then navigate to the next page
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1000);
+        }
+    </script>
+    
+</body>
+</html>

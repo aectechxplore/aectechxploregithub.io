@@ -1,0 +1,20 @@
+/* Header Styling */
+.header {
+    tab-size: fixed;
+    background-color: rgba(241, 230, 127, 0.85); /* Make header slightly transparent */
+    padding: 40px;
+    text-align: center;
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.btn {
+    background-color: #e9cd54;
+    color: white;
+    padding: 15px 30px; /* Larger padding for bigger buttons */
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.5em; /* Increased font size for buttons */
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}

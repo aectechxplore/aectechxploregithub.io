@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manning's Formula Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <head>
+    <!-- Header Section -->
+    <header class="header">
+        <h1>Manning's Formula Calculator</h1>
+        <div class="btn-group">
+            <a href="index.html" class="btn" onclick="dissolveAndNavigate(this, 'Darcy-Weisbach equation.html')">Back to home page</a>
+        </div>
+    </header>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 2px solid #5f5f5f;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #a1c4fd;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            background-color: #b1b1b171;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manning's Formula Calculator</h1>
+        
+        <div class="formula">
+        
+            <p>
+            <em>v = (1 / n) * R<sup>2/3</sup> * S<sup>1/2</sup></em> <br><br>
+            </p>
+        </div><br>
+
+
+        <label for="roughnessCoefficient"><br>Manning's Roughness Coefficient (n):</label>
+        <input type="number" id="roughnessCoefficient" placeholder="Enter Manning's n" step="any">
+
+        <label for="hydraulicRadius"><br>Hydraulic Radius (R, meters or feet):</label>
+        <input type="number" id="hydraulicRadius" placeholder="Enter hydraulic radius" step="any">
+
+        <label for="slope"><br>Channel Slope (S):</label>
+        <input type="number" id="slope" placeholder="Enter channel slope" step="any">
+
+        <label for="crossSectionArea"><br>Cross-Sectional Area (A, m² or ft²):</label>
+        <input type="number" id="crossSectionArea" placeholder="Enter cross-sectional area" step="any">
+
+        <label for="velocity"><br>Velocity (v, m/s or ft/s):</label>
+        <input type="number" id="velocity" placeholder="Enter velocity" step="any">
+
+        <button onclick="findMissingValue()">Find Missing Value</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function findMissingValue() {
+            const n = parseFloat(document.getElementById('roughnessCoefficient').value);
+            const R = parseFloat(document.getElementById('hydraulicRadius').value);
+            const S = parseFloat(document.getElementById('slope').value);
+            const A = parseFloat(document.getElementById('crossSectionArea').value);
+            const v = parseFloat(document.getElementById('velocity').value);
+
+            let result = '';
+
+            // Case 1: Calculate velocity (v) if it is missing
+            if (isNaN(v) && !isNaN(n) && !isNaN(R) && !isNaN(S)) {
+                const velocity = (1 / n) * (R ** (2 / 3)) * (S ** 0.5);
+                result = `Calculated Velocity (v): ${velocity.toFixed(4)} m/s or ft/s`;
+            }
+            // Case 2: Calculate Manning's roughness coefficient (n) if it is missing
+            else if (isNaN(n) && !isNaN(v) && !isNaN(R) && !isNaN(S)) {
+                const calculatedN = v / ((R ** (2 / 3)) * (S ** 0.5));
+                result = `Calculated Manning's Roughness Coefficient (n): ${calculatedN.toFixed(4)}`;
+            }
+            // Case 3: Calculate hydraulic radius (R) if it is missing
+            else if (isNaN(R) && !isNaN(v) && !isNaN(n) && !isNaN(S)) {
+                const calculatedR = ((v * n) / (S ** 0.5)) ** (3 / 2);
+                result = `Calculated Hydraulic Radius (R): ${calculatedR.toFixed(4)} meters or feet`;
+            }
+            // Case 4: Calculate channel slope (S) if it is missing
+            else if (isNaN(S) && !isNaN(v) && !isNaN(n) && !isNaN(R)) {
+                const calculatedS = (v * n / (R ** (2 / 3))) ** 2;
+                result = `Calculated Channel Slope (S): ${calculatedS.toFixed(4)}`;
+            }
+            // Case 5: Calculate flow rate (Q) if cross-sectional area (A) and velocity (v) are provided
+            else if (!isNaN(v) && !isNaN(A)) {
+                const flowRate = v * A;
+                result = `Calculated Flow Rate (Q): ${flowRate.toFixed(4)} m³/s or ft³/s`;
+            }
+            // If not enough inputs to calculate any missing value
+            else {
+                result = "Please provide enough information to calculate the missing value.";
+            }
+
+            document.getElementById('result').innerHTML = result;
+        }
+    </script>
+</body>
+</html>
